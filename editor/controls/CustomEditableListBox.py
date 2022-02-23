@@ -23,15 +23,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
 import wx
-import wx.gizmos
+import wx.adv
 
 
-class CustomEditableListBox(wx.gizmos.EditableListBox):
+class CustomEditableListBox(wx.adv.EditableListBox):
 
     def __init__(self, *args, **kwargs):
-        wx.gizmos.EditableListBox.__init__(self, *args, **kwargs)
+        wx.adv.EditableListBox.__init__(self, *args, **kwargs)
 
         listbox = self.GetListCtrl()
         listbox.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)

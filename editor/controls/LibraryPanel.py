@@ -22,7 +22,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-from __future__ import absolute_import
+
 from functools import reduce
 import wx
 
@@ -31,7 +31,7 @@ import wx
 # -------------------------------------------------------------------------------
 
 
-[CATEGORY, BLOCK] = range(2)
+[CATEGORY, BLOCK] = list(range(2))
 
 
 # -------------------------------------------------------------------------------
@@ -77,12 +77,12 @@ class LibraryPanel(wx.Panel):
             search_textctrl = self.SearchCtrl.GetChildren()[0]
             search_textctrl.Bind(wx.EVT_CHAR, self.OnKeyDown)
 
-        main_sizer.AddWindow(self.SearchCtrl, flag=wx.GROW)
+        main_sizer.Add(self.SearchCtrl, flag=wx.GROW)
 
         # Add Splitter window for tree and block comment to main sizer
         splitter_window = wx.SplitterWindow(self)
         splitter_window.SetSashGravity(1.0)
-        main_sizer.AddWindow(splitter_window, flag=wx.GROW)
+        main_sizer.Add(splitter_window, flag=wx.GROW)
 
         # Add TreeCtrl for functions and function blocks library in splitter
         # window
@@ -346,12 +346,10 @@ class LibraryPanel(wx.Panel):
             if inputs is not None and type_inputs is not None:
                 same_inputs = reduce(
                     lambda x, y: x and y,
-                    map(
-                        lambda x: x[0] == x[1] or x[0] == 'ANY' or x[1] == 'ANY',
-                        zip(type_inputs,
+                    [x[0] == x[1] or x[0] == 'ANY' or x[1] == 'ANY' for x in zip(type_inputs,
                             (inputs[:type_extension]
                              if type_extension is not None
-                             else inputs))),
+                             else inputs))],
                     True)
             else:
                 same_inputs = True

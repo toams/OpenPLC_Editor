@@ -36,31 +36,31 @@ else:
 print("Configuring environment...")
 if (os.name == 'nt'):
     env_setup = os.popen('..\\bin\\arduino-cli-w32 core install arduino:avr')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('..\\bin\\arduino-cli-w32 core install arduino:samd')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('..\\bin\\arduino-cli-w32 core install arduino:megaavr')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('..\\bin\\arduino-cli-w32 core install arduino:mbed_portenta')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('..\\bin\\arduino-cli-w32 lib install ArduinoModbus')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('..\\bin\\arduino-cli-w32 lib install Arduino_MachineControl')
-    print(env_setup.read())
+    print((env_setup.read()))
     
 else:
     env_setup = os.popen('../bin/arduino-cli-l64 core install arduino:avr')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('../bin/arduino-cli-l64 core install arduino:samd')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('../bin/arduino-cli-l64 core install arduino:megaavr')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('../bin/arduino-cli-l64 core install arduino:mbed_portenta')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('../bin/arduino-cli-l64 lib install ArduinoModbus')
-    print(env_setup.read())
+    print((env_setup.read()))
     env_setup = os.popen('../bin/arduino-cli-l64 lib install Arduino_MachineControl')
-    print(env_setup.read())
+    print((env_setup.read()))
 
 
 #Generate C files
@@ -69,7 +69,7 @@ if (os.name == 'nt'):
     compilation = os.popen('..\\bin\\iec2c.exe ' + st_file)
 else:
     compilation = os.popen('../bin/iec2c ' + st_file)
-print(compilation.read())
+print((compilation.read()))
 
 #Generate glueVars.c
 if not (os.path.exists("LOCATED_VARIABLES.h")):
@@ -108,7 +108,7 @@ for located_var in located_vars:
         located_var = located_var.split('(')[1].split(')')[0]
         var_data = located_var.split(',')
         if (len(var_data) < 5):
-            print('Error processing located var line: ' + located_var)
+            print(('Error processing located var line: ' + located_var))
         else:
             var_type = var_data[0]
             var_name = var_data[1]
@@ -120,26 +120,26 @@ for located_var in located_vars:
             #check variable type and assign to correct buffer pointer
             if ('QX' in var_name):
                 if (int(var_address) > 2 or int(var_subaddress) > 7):
-                    print('Error: wrong location for var ' + var_name)
+                    print(('Error: wrong location for var ' + var_name))
                     quit()
                 glueVars += '    bool_output[' + var_address + '][' + var_subaddress + '] = ' + var_name + ';\n'
             elif ('IX' in var_name):
                 if (int(var_address) > 2 or int(var_subaddress) > 7):
-                    print('Error: wrong location for var ' + var_name)
+                    print(('Error: wrong location for var ' + var_name))
                     quit()
                 glueVars += '    bool_input[' + var_address + '][' + var_subaddress + '] = ' + var_name + ';\n'
             elif ('QW' in var_name):
                 if (int(var_address) > 16):
-                    print('Error: wrong location for var ' + var_name)
+                    print(('Error: wrong location for var ' + var_name))
                     quit()
                 glueVars += '    int_output[' + var_address + '] = ' + var_name + ';\n'
             elif ('IW' in var_name):
                 if (int(var_address) > 16):
-                    print('Error: wrong location for var ' + var_name)
+                    print(('Error: wrong location for var ' + var_name))
                     quit()
                 glueVars += '    int_input[' + var_address + '] = ' + var_name + ';\n'
             else:
-                print('Could not process location "' + var_name + '" from line: ' + located_var)
+                print(('Could not process location "' + var_name + '" from line: ' + located_var))
                 quit()
 
 glueVars += """
@@ -196,13 +196,13 @@ if (os.name == 'nt'):
     compilation = os.popen('..\\bin\\arduino-cli-w32 compile -v --libraries=..\\..\\ --build-property compiler.c.extra_flags="-I..\\src\\lib" --build-property compiler.cpp.extra_flags="-I..\\src\\lib" --export-binaries -b ' + platform + ' ..\\examples\\Baremetal\\Baremetal.ino')
 else:
     compilation = os.popen('../bin/arduino-cli-l64 compile -v --libraries=../../ --build-property compiler.c.extra_flags="-I../src/lib" --build-property compiler.cpp.extra_flags="-I../src/lib" --export-binaries -b ' + platform + ' ../examples/Baremetal/Baremetal.ino')
-print(compilation.read())
+print((compilation.read()))
 if (port != None):
     if (os.name == 'nt'):
         uploading = os.popen('..\\bin\\arduino-cli-w32 upload --port ' + port + ' --fqbn ' + platform + ' ..\\examples\\Baremetal/')
     else:
         uploading = os.popen('../bin/arduino-cli-l64 upload --port ' + port + ' --fqbn ' + platform + ' ../examples/Baremetal/')
-    print(uploading.read())
+    print((uploading.read()))
     
 #print("No clean up")
 #quit()

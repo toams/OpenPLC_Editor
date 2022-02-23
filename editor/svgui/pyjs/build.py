@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 import sys
 import shutil
 import re
@@ -328,8 +328,8 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
                                      library_modules=['dynamicajax.js',
                                                       '_pyjs.js', 'sys',
                                                       'pyjslib'])
-        pover[platform].update(app_translator.overrides.items())
-        for mname, name in app_translator.overrides.items():
+        pover[platform].update(list(app_translator.overrides.items()))
+        for mname, name in list(app_translator.overrides.items()):
             pd = overrides.setdefault(mname, {})
             pd[platform] = name
 
@@ -344,7 +344,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
 
         dependencies = {}
 
-        deps = map(pyjs.strip_py, modules_to_do)
+        deps = list(map(pyjs.strip_py, modules_to_do))
         for d in deps:
             sublist = add_subdeps(dependencies, d)
             modules_to_do += sublist
@@ -373,8 +373,8 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
                 mod_translator.translate(mod_name,
                                          is_app=False,
                                          debug=debug)
-            pover[platform].update(mod_translator.overrides.items())
-            for mname, name in mod_translator.overrides.items():
+            pover[platform].update(list(mod_translator.overrides.items()))
+            for mname, name in list(mod_translator.overrides.items()):
                 pd = overrides.setdefault(mname, {})
                 pd[platform] = name
 
@@ -382,7 +382,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
             modules_to_do += mods
             modules[platform] += mods
 
-            deps = map(pyjs.strip_py, mods)
+            deps = list(map(pyjs.strip_py, mods))
             sd = subdeps(mod_name)
             if len(sd) > 1:
                 deps += sd[:-1]
@@ -438,7 +438,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
             modnames = []
 
             for md in modlevels:
-                mnames = map(lambda x: "'%s'" % x, md)
+                mnames = ["'%s'" % x for x in md]
                 mnames = "new pyjslib.List([\n\t\t\t%s])" % ',\n\t\t\t'.join(mnames)
                 modnames.append(mnames)
 
@@ -447,7 +447,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
 
             # convert the overrides
 
-            overnames = map(lambda x: "'%s': '%s'" % x, pover[platform].items())
+            overnames = ["'%s': '%s'" % x for x in list(pover[platform].items())]
             overnames = "new pyjslib.Dict({\n\t\t%s\n\t})" % ',\n\t\t'.join(overnames)
 
             if dynamic:
@@ -476,7 +476,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
         app_modnames = []
 
         for md in mod_levels[platform]:
-            mnames = map(lambda x: "'%s'" % x, md)
+            mnames = ["'%s'" % x for x in md]
             mnames = "new pyjslib.List([\n\t\t\t%s])" % ',\n\t\t\t'.join(mnames)
             app_modnames.append(mnames)
 
@@ -485,7 +485,7 @@ def generateAppFiles(data_dir, js_includes, app_name, debug, output, dynamic,
 
         # convert the overrides
 
-        overnames = map(lambda x: "'%s': '%s'" % x, pover[platform].items())
+        overnames = ["'%s': '%s'" % x for x in list(pover[platform].items())]
         overnames = "new pyjslib.Dict({\n\t\t%s\n\t})" % ',\n\t\t'.join(overnames)
 
         # print "platform names", platform, overnames
@@ -579,8 +579,8 @@ def filter_mods(app_name, md):
         md.remove('pyjslib')
     while app_name in md:
         md.remove(app_name)
-    md = filter(lambda x: not x.endswith('.js'), md)
-    md = map(pyjs.strip_py, md)
+    md = [x for x in md if not x.endswith('.js')]
+    md = list(map(pyjs.strip_py, md))
 
     return uniquify(md)
 
@@ -588,7 +588,7 @@ def filter_mods(app_name, md):
 def filter_deps(app_name, deps):
 
     res = {}
-    for (k, l) in deps.items():
+    for (k, l) in list(deps.items()):
         mods = filter_mods(k, l)
         while k in mods:
             mods.remove(k)
@@ -634,7 +634,7 @@ def make_deps(app_name, deps, mod_list):
         l_deps = len(deps)
         # print l_deps
         if l_deps == last_len:
-            for m, dl in deps.items():
+            for m, dl in list(deps.items()):
                 for d in dl:
                     if m in deps.get(d, []):
                         raise Exception('Circular Imports found: \n%s %s -> %s %s'
@@ -645,11 +645,11 @@ def make_deps(app_name, deps, mod_list):
         # print "modlist", mod_list
         nodeps = nodeps_list(mod_list, deps)
         # print "nodeps", nodeps
-        mod_list = filter(lambda x: x not in nodeps, mod_list)
+        mod_list = [x for x in mod_list if x not in nodeps]
         newdeps = {}
-        for k in deps.keys():
+        for k in list(deps.keys()):
             depslist = deps[k]
-            depslist = filter(lambda x: x not in nodeps, depslist)
+            depslist = [x for x in depslist if x not in nodeps]
             if depslist:
                 newdeps[k] = depslist
         # print "newdeps", newdeps

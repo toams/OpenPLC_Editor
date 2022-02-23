@@ -7,8 +7,8 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 import os
 import string
 from xml.dom import minidom
@@ -314,7 +314,7 @@ class SDOPanelClass(wx.Panel):
         wx.Panel.__init__(self, parent, -1)
 
         self.DatatypeDescription, self.CommunicationObject, self.ManufacturerSpecific, \
-            self.ProfileSpecific, self.Reserved, self.AllSDOData = range(6)
+            self.ProfileSpecific, self.Reserved, self.AllSDOData = list(range(6))
 
         self.Controler = controler
 
@@ -958,7 +958,7 @@ class SlaveSiiSmartView(wx.Panel):
         # Config Data: EEPROM Size, PDI Type, Device Emulation
         # Find PDI Type in pdiType dictionary
         cnt_pdi_type = self.Controler.CommonMethod.SmartViewInfosFromXML["pdi_type"]
-        for i in self.PDIType.keys():
+        for i in list(self.PDIType.keys()):
             if cnt_pdi_type == i:
                 cnt_pdi_type = self.PDIType[i][0]
                 break
@@ -1038,7 +1038,7 @@ class SlaveSiiSmartView(wx.Panel):
         eeprom_size = str((int(self.GetWordAddressData(sii_dict.get('Size'), 10))+1)//8*1024)
         # Find PDI Type in pdiType dictionary
         cnt_pdi_type = int(self.GetWordAddressData(sii_dict.get('PDIControl'), 16).split('x')[1][2:4], 16)
-        for i in self.PDIType.keys():
+        for i in list(self.PDIType.keys()):
             if cnt_pdi_type == i:
                 cnt_pdi_type = self.PDIType[i][0]
                 break
@@ -1515,7 +1515,7 @@ class RegisterAccessPanel(wx.Panel):
                                                   ("pdi", "type", self.PDIType),
                                                   ("fmmu", "number", self.FMMUNumber),
                                                   ("sm", "number", self.SMNumber)]:
-                        if property in register.attributes.keys():
+                        if property in list(register.attributes.keys()):
                             if type == "type":
                                 if register.attributes[property].value == value:
                                     self.GetRegisterInfo(reg_info_tree, register)
@@ -1562,7 +1562,7 @@ class RegisterAccessPanel(wx.Panel):
                                                       ("pdi", "type", self.PDIType),
                                                       ("fmmu", "number", self.FMMUNumber),
                                                       ("sm", "number", self.SMNumber)]:
-                            if property in detail.attributes.keys():
+                            if property in list(detail.attributes.keys()):
                                 if type == "type":
                                     if detail.attributes[property].value == value:
                                         self.GetRegisterDetailInfo(reg_info_tree, reg_index, detail)
@@ -1930,7 +1930,7 @@ class RegisterMainTable(wx.grid.Grid):
 
         reg_sub_grid_data = []
 
-        BIT_RANGE, NAME, DESCRIPTIONS = range(3)
+        BIT_RANGE, NAME, DESCRIPTIONS = list(range(3))
 
         # Check if this register's detail description is exist or not,
         # and create data structure for the detail description table ; sub grid

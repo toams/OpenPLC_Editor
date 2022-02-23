@@ -9,8 +9,8 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 import os
 
 from etherlab.EthercatSlave import ExtractHexDecValue, DATATYPECONVERSION, ExtractName
@@ -199,8 +199,8 @@ class _EthercatCFileGenerator(object):
         }
 
         # Initialize variable storing variable mapping state
-        for slave_entries in self.UsedVariables.itervalues():
-            for entry_infos in slave_entries.itervalues():
+        for slave_entries in self.UsedVariables.values():
+            for entry_infos in slave_entries.values():
                 entry_infos["mapped"] = False
 
         # Sort slaves by position (IEC_Channel)
@@ -235,7 +235,7 @@ class _EthercatCFileGenerator(object):
             # Adding code for declaring slave in master code template strings
             for element in ["vendor", "product_code", "revision_number"]:
                 type_infos[element] = ExtractHexDecValue(type_infos[element])
-            type_infos.update(dict(zip(["slave", "alias", "position"], (slave_idx,) + slave_pos)))
+            type_infos.update(dict(list(zip(["slave", "alias", "position"], (slave_idx,) + slave_pos))))
 
             # Extract slave device CoE informations
             device_coe = device.getCoE()
@@ -353,7 +353,7 @@ class _EthercatCFileGenerator(object):
                         selected_pdos.append(pdo_index)
 
                 excluded_pdos = []
-                for exclusion_scope in exclusive_pdos.itervalues():
+                for exclusion_scope in exclusive_pdos.values():
                     exclusion_scope.sort(ExclusionSortFunction)
                     start_excluding_index = 0
                     if exclusion_scope[0]["matching"] > 0:
@@ -392,8 +392,8 @@ class _EthercatCFileGenerator(object):
                         if entry_declaration is not None and not entry_declaration["mapped"]:
                             pdo_needed = True
 
-                            entry_infos.update(dict(zip(["var_type", "dir", "var_name", "no_decl", "extra_declarations"],
-                                                        entry_declaration["infos"])))
+                            entry_infos.update(dict(list(zip(["var_type", "dir", "var_name", "no_decl", "extra_declarations"],
+                                                        entry_declaration["infos"]))))
                             entry_declaration["mapped"] = True
 
                             entry_type = entry.getDataType().getcontent()
@@ -463,7 +463,7 @@ class _EthercatCFileGenerator(object):
                                 category_infos["max_index"] = max_index
                                 break
 
-                    for (index, subindex), entry_declaration in slave_variables.iteritems():
+                    for (index, subindex), entry_declaration in slave_variables.items():
 
                         if not entry_declaration["mapped"]:
                             entry = device_entries.get((index, subindex), None)
@@ -480,8 +480,8 @@ class _EthercatCFileGenerator(object):
                             }
                             entry_infos.update(type_infos)
 
-                            entry_infos.update(dict(zip(["var_type", "dir", "var_name", "no_decl", "extra_declarations"],
-                                                        entry_declaration["infos"])))
+                            entry_infos.update(dict(list(zip(["var_type", "dir", "var_name", "no_decl", "extra_declarations"],
+                                                        entry_declaration["infos"]))))
                             entry_declaration["mapped"] = True
 
                             if entry_infos["var_type"] != entry["Type"]:
@@ -565,7 +565,7 @@ class _EthercatCFileGenerator(object):
 
                 str_completion["pdos_configuration_declaration"] += SLAVE_PDOS_CONFIGURATION_DECLARATION % pdos_infos
 
-            for (index, subindex), entry_declaration in slave_variables.iteritems():
+            for (index, subindex), entry_declaration in slave_variables.items():
                 if not entry_declaration["mapped"]:
                     message = _("Entry index 0x{a1:.4x}, subindex 0x{a2:.2x} not mapped for device {a3}").\
                               format(a1=index, a2=subindex, a3=type_infos["device_type"])

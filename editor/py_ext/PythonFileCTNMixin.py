@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
 import os
 import re
 from builtins import str as text
@@ -110,8 +110,7 @@ class PythonFileCTNMixin(CodeFile):
                 if var.getonchange() else None
 
         pyextname = self.CTNName()
-        varinfos = map(
-            lambda variable: {
+        varinfos = [{
                 "name": variable.getname(),
                 "desc": repr(variable.getdesc()),
                 "onchangecode": _onchangecode(variable),
@@ -122,8 +121,7 @@ class PythonFileCTNMixin(CodeFile):
                 "IECtype": variable.gettype(),
                 "initial": repr(variable.getinitial()),
                 "pyextname": pyextname
-            },
-            self.CodeFile.variables.variable)
+            } for variable in self.CodeFile.variables.variable]
         # python side PLC global variables access stub
         globalstubs = "\n".join([
             """\

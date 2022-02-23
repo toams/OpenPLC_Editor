@@ -24,8 +24,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 import os
 import sys
 import tempfile
@@ -233,31 +233,30 @@ class Beremiz(IDEFrame):
         IDEFrame._init_utils(self)
 
     def _init_coll_FileMenu_Items(self, parent):
-        AppendMenu(parent, help='', id=wx.ID_NEW,
-                   kind=wx.ITEM_NORMAL, text=_(u'New') + '\tCTRL+N')
-        AppendMenu(parent, help='', id=wx.ID_OPEN,
-                   kind=wx.ITEM_NORMAL, text=_(u'Open') + '\tCTRL+O')
-        parent.AppendMenu(ID_FILEMENURECENTPROJECTS, _("&Recent Projects"), self.RecentProjectsMenu)
+        AppendMenu(parent, item='New' + '\tCTRL+N', id=wx.ID_NEW, helpString='',
+                   kind=wx.ITEM_NORMAL, )
+        AppendMenu(parent, item='Open' + '\tCTRL+O', id=wx.ID_OPEN, helpString='',
+                   kind=wx.ITEM_NORMAL, )
+        parent.AppendMenu(ID_FILEMENURECENTPROJECTS, '&Recent Projects', self.RecentProjectsMenu)
         parent.AppendSeparator()
-        AppendMenu(parent, help='', id=wx.ID_SAVE,
-                   kind=wx.ITEM_NORMAL, text=_(u'Save') + '\tCTRL+S')
-        AppendMenu(parent, help='', id=wx.ID_SAVEAS,
-                   kind=wx.ITEM_NORMAL, text=_(u'Save as') + '\tCTRL+SHIFT+S')
-        AppendMenu(parent, help='', id=wx.ID_CLOSE,
-                   kind=wx.ITEM_NORMAL, text=_(u'Close Tab') + '\tCTRL+W')
-        AppendMenu(parent, help='', id=wx.ID_CLOSE_ALL,
-                   kind=wx.ITEM_NORMAL, text=_(u'Close Project') + '\tCTRL+SHIFT+W')
+        AppendMenu(parent, item='Save' + '\tCTRL+S', id=wx.ID_SAVE, helpString='',
+                   kind=wx.ITEM_NORMAL, )
+        AppendMenu(parent, item='Save as' + '\tCTRL+SHIFT+S', id=wx.ID_SAVEAS, helpString='',
+                   kind=wx.ITEM_NORMAL)
+        AppendMenu(parent, item='Close Tab' + '\tCTRL+W', id=wx.ID_CLOSE, helpString='',
+                   kind=wx.ITEM_NORMAL)
+        AppendMenu(parent, item='Close Project' + '\tCTRL+SHIFT+W', id=wx.ID_CLOSE_ALL, helpString='',
+                   kind=wx.ITEM_NORMAL)
         parent.AppendSeparator()
-        AppendMenu(parent, help='', id=wx.ID_PAGE_SETUP,
-                   kind=wx.ITEM_NORMAL, text=_(u'Page Setup') + '\tCTRL+ALT+P')
-        AppendMenu(parent, help='', id=wx.ID_PREVIEW,
-                   kind=wx.ITEM_NORMAL, text=_(u'Preview') + '\tCTRL+SHIFT+P')
-        AppendMenu(parent, help='', id=wx.ID_PRINT,
-                   kind=wx.ITEM_NORMAL, text=_(u'Print') + '\tCTRL+P')
+        AppendMenu(parent, item='Page Setup' + '\tCTRL+ALT+P', id=wx.ID_PAGE_SETUP, helpString='',
+                   kind=wx.ITEM_NORMAL)
+        AppendMenu(parent, item='Preview' + '\tCTRL+SHIFT+P', id=wx.ID_PREVIEW, helpString='',
+                   kind=wx.ITEM_NORMAL)
+        AppendMenu(parent, item='Print' + '\tCTRL+P', id=wx.ID_PRINT, helpString='',
+                   kind=wx.ITEM_NORMAL)
         parent.AppendSeparator()
-        AppendMenu(parent, help='', id=wx.ID_EXIT,
-                   kind=wx.ITEM_NORMAL, text=_(u'Quit') + '\tCTRL+Q')
-
+        AppendMenu(parent, item='Quit' + '\tCTRL+Q', id=wx.ID_EXIT, helpString='',
+                   kind=wx.ITEM_NORMAL)
         self.Bind(wx.EVT_MENU, self.OnNewProjectMenu, id=wx.ID_NEW)
         self.Bind(wx.EVT_MENU, self.OnOpenProjectMenu, id=wx.ID_OPEN)
         self.Bind(wx.EVT_MENU, self.OnSaveProjectMenu, id=wx.ID_SAVE)
@@ -269,11 +268,11 @@ class Beremiz(IDEFrame):
         self.Bind(wx.EVT_MENU, self.OnPrintMenu, id=wx.ID_PRINT)
         self.Bind(wx.EVT_MENU, self.OnQuitMenu, id=wx.ID_EXIT)
 
-        self.AddToMenuToolBar([(wx.ID_NEW, "new", _(u'New'), None),
-                               (wx.ID_OPEN, "open", _(u'Open'), None),
-                               (wx.ID_SAVE, "save", _(u'Save'), None),
-                               (wx.ID_SAVEAS, "saveas", _(u'Save As...'), None),
-                               (wx.ID_PRINT, "print", _(u'Print'), None)])
+        self.AddToMenuToolBar([(wx.ID_NEW, "new", _('New'), None),
+                               (wx.ID_OPEN, "open", _('Open'), None),
+                               (wx.ID_SAVE, "save", _('Save'), None),
+                               (wx.ID_SAVEAS, "saveas", _('Save As...'), None),
+                               (wx.ID_PRINT, "print", _('Print'), None)])
 
     def _RecursiveAddMenuItems(self, menu, items):
         for name, text, helpstr, children in items:
@@ -293,22 +292,23 @@ class Beremiz(IDEFrame):
         def handler(event):
             return wx.MessageBox(
                 version.GetCommunityHelpMsg(),
-                _(u'Community support'),
+                _('Community support'),
                 wx.OK | wx.ICON_INFORMATION)
 
-        item = parent.Append(wx.ID_ANY, _(u'Community support'), '')
+        item = parent.Append(wx.ID_ANY, _('Community support'), '')
         self.Bind(wx.EVT_MENU, handler, item)
 
-        parent.Append(help='', id=wx.ID_ABOUT,
-                      kind=wx.ITEM_NORMAL, text=_(u'About'))
+
+        parent.Append(helpString='', item='About', id=wx.ID_ABOUT,
+                      kind=wx.ITEM_NORMAL)
         self.Bind(wx.EVT_MENU, self.OnAboutMenu, id=wx.ID_ABOUT)
 
     def _init_coll_ConnectionStatusBar_Fields(self, parent):
         parent.SetFieldsCount(3)
 
-        parent.SetStatusText(number=0, text='')
-        parent.SetStatusText(number=1, text='')
-        parent.SetStatusText(number=2, text='')
+        parent.SetStatusText(text='', i=0)
+        parent.SetStatusText(text='', i=1)
+        parent.SetStatusText(text='', i=2)
 
         parent.SetStatusWidths([-1, 300, 200])
 
@@ -384,7 +384,7 @@ class Beremiz(IDEFrame):
 
         self.AUIManager.Update()
 
-        self.ConnectionStatusBar = esb.EnhancedStatusBar(self, style=wx.ST_SIZEGRIP)
+        self.ConnectionStatusBar = esb.EnhancedStatusBar(self, style=wx.STB_SIZEGRIP)
         self._init_coll_ConnectionStatusBar_Fields(self.ConnectionStatusBar)
         self.ProgressStatusBar = wx.Gauge(self.ConnectionStatusBar, -1, range=100)
         self.ConnectionStatusBar.AddWidget(self.ProgressStatusBar, esb.ESB_EXACT_FIT, esb.ESB_EXACT_FIT, 2)
@@ -573,7 +573,7 @@ class Beremiz(IDEFrame):
             elif answer == wx.ID_CANCEL:
                 return False
 
-        for idx in xrange(self.TabsOpened.GetPageCount()):
+        for idx in range(self.TabsOpened.GetPageCount()):
             window = self.TabsOpened.GetPage(idx)
             if not window.CheckSaveBeforeClosing():
                 return False
@@ -682,8 +682,8 @@ class Beremiz(IDEFrame):
 
     def RefreshRecentProjectsMenu(self):
         try:
-            recent_projects = map(DecodeFileSystemPath,
-                                  self.GetConfigEntry("RecentProjects", []))
+            recent_projects = list(map(DecodeFileSystemPath,
+                                  self.GetConfigEntry("RecentProjects", [])))
         except Exception:
             recent_projects = []
 
@@ -693,7 +693,7 @@ class Beremiz(IDEFrame):
 
         self.FileMenu.Enable(ID_FILEMENURECENTPROJECTS, len(recent_projects) > 0)
         for idx, projectpath in enumerate(recent_projects):
-            text = u'&%d: %s' % (idx + 1, projectpath)
+            text = '&%d: %s' % (idx + 1, projectpath)
 
             item = self.RecentProjectsMenu.Append(wx.ID_ANY, text, '')
             self.Bind(wx.EVT_MENU, self.GenerateOpenRecentProjectFunction(projectpath), item)
@@ -717,7 +717,7 @@ class Beremiz(IDEFrame):
                 menu.AppendSeparator()
             else:
                 text, id, _help, callback = infos
-                AppendMenu(menu, help='', id=id, kind=kind, text=text)
+                AppendMenu(menu, help='', id=id, kind=kind, item=text)
                 if callback is not None:
                     self.Bind(wx.EVT_MENU, callback, id=id)
 
@@ -762,7 +762,7 @@ class Beremiz(IDEFrame):
             else:
                 panel = None
             if panel != self.LastPanelSelected:
-                for i in xrange(self.EditMenuSize, self.EditMenu.GetMenuItemCount()):
+                for i in range(self.EditMenuSize, self.EditMenu.GetMenuItemCount()):
                     item = self.EditMenu.FindItemByPosition(self.EditMenuSize)
                     if item is not None:
                         if item.IsSeparator():
@@ -780,7 +780,7 @@ class Beremiz(IDEFrame):
             if panel is not None:
                 panel.RefreshConfNodeMenu(self.EditMenu)
         else:
-            for i in xrange(self.EditMenuSize, self.EditMenu.GetMenuItemCount()):
+            for i in range(self.EditMenuSize, self.EditMenu.GetMenuItemCount()):
                 item = self.EditMenu.FindItemByPosition(i)
                 if item is not None:
                     if item.IsSeparator():
@@ -788,7 +788,7 @@ class Beremiz(IDEFrame):
                     else:
                         self.EditMenu.Delete(item.GetId())
             self.LastPanelSelected = None
-        self.MenuBar.UpdateMenus()
+        self.MenuBar.Refresh()
 
     def RefreshAll(self):
         self.RefreshStatusToolBar()
@@ -808,7 +808,7 @@ class Beremiz(IDEFrame):
         return cPickle.loads(str(self.Config.Read(entry_name, cPickle.dumps(default))))
 
     def ResetConnectionStatusBar(self):
-        for field in xrange(self.ConnectionStatusBar.GetFieldsCount()):
+        for field in range(self.ConnectionStatusBar.GetFieldsCount()):
             self.ConnectionStatusBar.SetStatusText('', field)
 
     def ResetView(self):
@@ -823,8 +823,8 @@ class Beremiz(IDEFrame):
 
     def RefreshConfigRecentProjects(self, projectpath, err=False):
         try:
-            recent_projects = map(DecodeFileSystemPath,
-                                  self.GetConfigEntry("RecentProjects", []))
+            recent_projects = list(map(DecodeFileSystemPath,
+                                  self.GetConfigEntry("RecentProjects", [])))
         except Exception:
             recent_projects = []
         if projectpath in recent_projects:
@@ -832,7 +832,7 @@ class Beremiz(IDEFrame):
         if not err:
             recent_projects.insert(0, projectpath)
         self.Config.Write("RecentProjects", cPickle.dumps(
-            map(EncodeFileSystemPath, recent_projects[:MAX_RECENT_PROJECTS])))
+            list(map(EncodeFileSystemPath, recent_projects[:MAX_RECENT_PROJECTS]))))
         self.Config.Flush()
 
     def ResetPerspective(self):

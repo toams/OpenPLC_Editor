@@ -23,8 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 from collections import namedtuple
 
 import wx
@@ -175,15 +175,15 @@ class PouInstanceVariablesPanel(wx.Panel):
                 self.DebugButtonCallback, self.DebugButtonDClickCallback)}
 
         buttons_sizer = wx.FlexGridSizer(cols=3, hgap=0, rows=1, vgap=0)
-        buttons_sizer.AddWindow(self.ParentButton)
-        buttons_sizer.AddWindow(self.InstanceChoice, flag=wx.GROW)
-        buttons_sizer.AddWindow(self.DebugButton)
+        buttons_sizer.Add(self.ParentButton)
+        buttons_sizer.Add(self.InstanceChoice, flag=wx.GROW)
+        buttons_sizer.Add(self.DebugButton)
         buttons_sizer.AddGrowableCol(1)
         buttons_sizer.AddGrowableRow(0)
 
         main_sizer = wx.FlexGridSizer(cols=1, hgap=0, rows=2, vgap=0)
-        main_sizer.AddSizer(buttons_sizer, flag=wx.GROW)
-        main_sizer.AddWindow(self.VariablesList, flag=wx.GROW)
+        main_sizer.Add(buttons_sizer, flag=wx.GROW)
+        main_sizer.Add(self.VariablesList, flag=wx.GROW)
         main_sizer.AddGrowableCol(0)
         main_sizer.AddGrowableRow(1)
 

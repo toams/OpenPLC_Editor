@@ -9,7 +9,7 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
+
 import os
 from copy import deepcopy
 from functools import reduce
@@ -585,7 +585,7 @@ class _EthercatCTN(object):
                 device, _module_extra_params = self.GetModuleInfos(type_infos)
         if device is not None:
             entries = device.GetEntriesList(limits)
-            entries_list = entries.items()
+            entries_list = list(entries.items())
             entries_list.sort()
             entries = []
             current_index = None
@@ -657,7 +657,7 @@ class _EthercatCTN(object):
                     else:
                         sync_managers.append(LOCATION_VAR_INPUT)
 
-                entries = device.GetEntriesList().items()
+                entries = list(device.GetEntriesList().items())
                 entries.sort()
                 for (index, subindex), entry in entries:
                     var_size = self.GetSizeOfType(entry["Type"])

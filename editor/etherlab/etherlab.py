@@ -9,7 +9,7 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
+
 import os
 import shutil
 import csv
@@ -66,7 +66,7 @@ class EntryListFactory(object):
         self.Entries = entries
 
     def AddEntry(self, context, *args):
-        index, subindex = map(lambda x: int(x[0]), args[:2])
+        index, subindex = [int(x[0]) for x in args[:2]]
         new_entry_infos = {
             key: translate(arg[0]) if len(arg) > 0 else default
             for (key, translate, default), arg
@@ -112,11 +112,10 @@ if cls:
                 ("entries_list_ns", "AddEntry"): factory.AddEntry,
                 ("entries_list_ns", "HexDecValue"): HexDecValue,
                 ("entries_list_ns", "EntryName"): EntryName})
-        entries_list_xslt_tree(self, **dict(zip(
+        entries_list_xslt_tree(self, **dict(list(zip(
             ["min_index", "max_index"],
-            map(lambda x: etree.XSLT.strparam(str(x)),
-                limits if limits is not None else [0x0000, 0xFFFF])
-            )))
+            [etree.XSLT.strparam(str(x)) for x in limits if limits is not None else [0x0000, 0xFFFF]]
+            ))))
 
         return entries
     setattr(cls, "GetEntriesList", GetEntriesList)
@@ -270,10 +269,10 @@ for mapping needed location variables
         if self.Library is None:
             self.LoadModules()
         library = []
-        for vendor_id, vendor in self.Library.iteritems():
+        for vendor_id, vendor in self.Library.items():
             groups = []
             children_dict = {}
-            for group_type, group in vendor["groups"].iteritems():
+            for group_type, group in vendor["groups"].items():
                 group_infos = {"name": group["name"],
                                "order": group["order"],
                                "type": ETHERCAT_GROUP,
@@ -296,7 +295,7 @@ for mapping needed location variables
                         group_infos["children"].append(device_infos)
                         device_type_occurrences = device_dict.setdefault(device_type, [])
                         device_type_occurrences.append(device_infos)
-                for device_type_occurrences in device_dict.itervalues():
+                for device_type_occurrences in device_dict.values():
                     if len(device_type_occurrences) > 1:
                         for occurrence in device_type_occurrences:
                             occurrence["name"] += _(" (rev. %s)") % occurrence["infos"]["revision_number"]
@@ -315,13 +314,13 @@ for mapping needed location variables
         return library
 
     def GetVendors(self):
-        return [(vendor_id, vendor["name"]) for vendor_id, vendor in self.Library.items()]
+        return [(vendor_id, vendor["name"]) for vendor_id, vendor in list(self.Library.items())]
 
     def GetModuleInfos(self, module_infos):
         vendor = ExtractHexDecValue(module_infos["vendor"])
         vendor_infos = self.Library.get(vendor)
         if vendor_infos is not None:
-            for _group_name, group_infos in vendor_infos["groups"].iteritems():
+            for _group_name, group_infos in vendor_infos["groups"].items():
                 for device_type, device_infos in group_infos["devices"]:
                     product_code = ExtractHexDecValue(device_infos.getType().getProductCode())
                     revision_number = ExtractHexDecValue(device_infos.getType().getRevisionNo())
@@ -368,7 +367,7 @@ for mapping needed location variables
         extra_params = [param for param, _params_infos in self.MODULES_EXTRA_PARAMS]
         writer = csv.writer(csvfile, delimiter=';')
         writer.writerow(['Vendor', 'product_code', 'revision_number'] + extra_params)
-        for (vendor, product_code, revision_number), module_extra_params in self.ModulesExtraParams.iteritems():
+        for (vendor, product_code, revision_number), module_extra_params in self.ModulesExtraParams.items():
             writer.writerow([vendor, product_code, revision_number] +
                             [module_extra_params.get(param, '')
                              for param in extra_params])

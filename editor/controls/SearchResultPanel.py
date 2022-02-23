@@ -23,7 +23,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
 from functools import reduce
 
 import wx
@@ -59,16 +59,16 @@ def GenerateName(infos):
 class SearchResultPanel(wx.Panel):
 
     def _init_coll_MainSizer_Items(self, parent):
-        parent.AddSizer(self.HeaderSizer, 0, border=0, flag=wx.GROW)
-        parent.AddWindow(self.SearchResultsTree, 1, border=0, flag=wx.GROW)
+        parent.Add(self.HeaderSizer, 0, border=0, flag=wx.GROW)
+        parent.Add(self.SearchResultsTree, 1, border=0, flag=wx.GROW)
 
     def _init_coll_MainSizer_Growables(self, parent):
         parent.AddGrowableCol(0)
         parent.AddGrowableRow(1)
 
     def _init_coll_HeaderSizer_Items(self, parent):
-        parent.AddWindow(self.HeaderLabel, 1, border=5, flag=wx.LEFT | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
-        parent.AddWindow(self.ResetButton, 0, border=0, flag=0)
+        parent.Add(self.HeaderLabel, 1, border=5, flag=wx.LEFT | wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        parent.Add(self.ResetButton, 0, border=0, flag=0)
 
     def _init_coll_HeaderSizer_Growables(self, parent):
         parent.AddGrowableCol(0)
@@ -299,7 +299,7 @@ class SearchResultPanel(wx.Panel):
             start, end = infos["data"][1:3]
             text_lines = infos["text"].splitlines()
             start_idx = start[1]
-            end_idx = reduce(lambda x, y: x + y, map(lambda x: len(x) + 1, text_lines[:end[0] - start[0]]), end[1] + 1)
+            end_idx = reduce(lambda x, y: x + y, [len(x) + 1 for x in text_lines[:end[0] - start[0]]], end[1] + 1)
             style = wx.TextAttr(wx.BLACK, wx.Colour(206, 204, 247))
         elif infos["type"] is not None and infos["matches"] > 1:
             text = _("(%d matches)") % infos["matches"]

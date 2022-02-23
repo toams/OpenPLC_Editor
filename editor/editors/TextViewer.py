@@ -23,8 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 import re
 from functools import reduce
 
@@ -43,17 +43,17 @@ from controls.CustomStyledTextCtrl import CustomStyledTextCtrl, faces, GetCursor
 
 
 NEWLINE = "\n"
-NUMBERS = [str(i) for i in xrange(10)]
+NUMBERS = [str(i) for i in range(10)]
 LETTERS = ['_']
-for i in xrange(26):
+for i in range(26):
     LETTERS.append(chr(ord('a') + i))
     LETTERS.append(chr(ord('A') + i))
 
 [STC_PLC_WORD, STC_PLC_COMMENT, STC_PLC_NUMBER, STC_PLC_STRING,
  STC_PLC_VARIABLE, STC_PLC_PARAMETER, STC_PLC_FUNCTION, STC_PLC_JUMP,
  STC_PLC_ERROR, STC_PLC_SEARCH_RESULT,
- STC_PLC_EMPTY] = range(11)
-[SPACE, WORD, NUMBER, STRING, WSTRING, COMMENT, PRAGMA, DPRAGMA] = range(8)
+ STC_PLC_EMPTY] = list(range(11))
+[SPACE, WORD, NUMBER, STRING, WSTRING, COMMENT, PRAGMA, DPRAGMA] = list(range(8))
 
 [
     ID_TEXTVIEWER, ID_TEXTVIEWERTEXTCTRL,
@@ -67,14 +67,14 @@ IDENTIFIER_MODEL = re.compile(re_texts["identifier"])
 LABEL_MODEL = re.compile("[ \t\n]%(identifier)s:[ \t\n]" % re_texts)
 EXTENSIBLE_PARAMETER = re.compile("IN[1-9][0-9]*$")
 
-HIGHLIGHT_TYPES = {
-    ERROR_HIGHLIGHT: STC_PLC_ERROR,
-    SEARCH_RESULT_HIGHLIGHT: STC_PLC_SEARCH_RESULT,
-}
+#HIGHLIGHT_TYPES = {
+#    ERROR_HIGHLIGHT: STC_PLC_ERROR,
+#    SEARCH_RESULT_HIGHLIGHT: STC_PLC_SEARCH_RESULT,
+#}
 
 
 def LineStartswith(line, symbols):
-    return reduce(lambda x, y: x or y, map(line.startswith, symbols), False)
+    return reduce(lambda x, y: x or y, list(map(line.startswith, symbols)), False)
 
 
 class TextViewer(EditorPanel):
@@ -492,7 +492,7 @@ class TextViewer(EditorPanel):
             for category in self.Controler.GetBlockTypes(self.TagName, self.Debug):
                 for blocktype in category["list"]:
                     blockname = blocktype["name"].upper()
-                    if blocktype["type"] == "function" and blockname not in self.Keywords and blockname not in self.Variables.keys():
+                    if blocktype["type"] == "function" and blockname not in self.Keywords and blockname not in list(self.Variables.keys()):
                         interface = dict([(name, {}) for name, _type, _modifier in blocktype["inputs"] + blocktype["outputs"] if name != ''])
                         for param in ["EN", "ENO"]:
                             if param not in interface:
@@ -891,9 +891,9 @@ class TextViewer(EditorPanel):
                         elif words[0].upper() in ["JMP", "JMPC", "JMPNC"]:
                             kw = self.Jumps
                         else:
-                            kw = self.Variables.keys()
+                            kw = list(self.Variables.keys())
                 else:
-                    kw = self.Keywords + self.Variables.keys() + self.Functions.keys()
+                    kw = self.Keywords + list(self.Variables.keys()) + list(self.Functions.keys())
                 if len(kw) > 0:
                     target_word = words[-1]
                     struct_els = target_word.split('.')
@@ -910,7 +910,7 @@ class TextViewer(EditorPanel):
                             if len(cur_level_word) and cur_level_word.upper() in var_ctx:
                                 var_ctx = var_ctx[cur_level_word.upper()]
                             i += 1
-                        kw = var_ctx.keys()
+                        kw = list(var_ctx.keys())
                         if struct_els[-1].upper() == struct_els[-1]: 
                             target_word = self.cleanupForAutocomplete(struct_els[-1]).upper()
                         else:

@@ -4,13 +4,13 @@
 # See COPYING.Runtime file for copyrights details.
 #
 
-from __future__ import absolute_import
+
 import ctypes
 from ctypes import *
 from datetime import timedelta as td
 
-ctypes.pythonapi.PyString_AsString.argtypes = (ctypes.c_void_p,)
-ctypes.pythonapi.PyString_AsString.restype = ctypes.POINTER(ctypes.c_char)
+ctypes.pythonapi.PyBytes_AsString.argtypes = (ctypes.c_void_p,)
+ctypes.pythonapi.PyBytes_AsString.restype = ctypes.POINTER(ctypes.c_char)
 
 
 class IEC_STRING(Structure):
@@ -74,14 +74,14 @@ SwapedEndianessTypeTranslator = {
 TypeTranslator = SameEndianessTypeTranslator
 
 # Construct debugger natively supported types
-DebugTypesSize = dict([(key, sizeof(t)) for key, (t, p, u) in SameEndianessTypeTranslator.iteritems() if t is not None])
+DebugTypesSize = dict([(key, sizeof(t)) for key, (t, p, u) in SameEndianessTypeTranslator.items() if t is not None])
 
 
 def UnpackDebugBuffer(buff, indexes):
     res = []
     buffoffset = 0
     buffsize = len(buff)
-    buffptr = cast(ctypes.pythonapi.PyString_AsString(id(buff)), c_void_p).value
+    buffptr = cast(ctypes.pythonapi.PyBytes_AsString(id(buff)), c_void_p).value
     for iectype in indexes:
         c_type, unpack_func, _pack_func = \
             TypeTranslator.get(iectype, (None, None, None))

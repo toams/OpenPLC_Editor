@@ -15,14 +15,14 @@
 #
 # pylint: disable=no-absolute-import,bad-python3-import
 
-from __future__ import print_function
+
 import sys
 import compiler
 from compiler import ast
 import os
 import copy
 from builtins import str as text
-from past.builtins import basestring
+from past.builtins import str
 from six.moves import cStringIO
 
 # the standard location for builtins (e.g. pyjslib) can be
@@ -134,7 +134,7 @@ def escapejs(value):
 
 def uuprefix(name, leave_alone=0):
     name = name.split(".")
-    name = name[:leave_alone] + map(lambda x: "__%s" % x, name[leave_alone:])
+    name = name[:leave_alone] + ["__%s" % x for x in name[leave_alone:]]
     return '.'.join(name)
 
 
@@ -1358,7 +1358,7 @@ class Translator(object):
             return str(node.value)
         elif isinstance(node.value, float):
             return str(node.value)
-        elif isinstance(node.value, basestring):
+        elif isinstance(node.value, str):
             v = node.value
             if isinstance(node.value, text):
                 v = v.encode('utf-8')

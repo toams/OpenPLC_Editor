@@ -9,7 +9,7 @@
 #
 # See COPYING file for copyrights details.
 
-from __future__ import absolute_import
+
 import os
 
 import wx
@@ -356,11 +356,11 @@ __%(dir)s%(var_size)s%(location_str)s_%(index)d_%(subindex)d""" % loc_dict
         [fieldbus_interface_declaration, fieldbus_interface_definition,
          init_axis_params, extra_variables_retrieve, extra_variables_publish,
          extern_located_variables_declaration, entry_variables,
-         init_entry_variables] = map("\n".join, [
+         init_entry_variables] = list(map("\n".join, [
              fieldbus_interface_declaration, fieldbus_interface_definition,
              init_axis_params, extra_variables_retrieve, extra_variables_publish,
              extern_located_variables_declaration, entry_variables,
-             init_entry_variables])
+             init_entry_variables]))
 
         # Write generated content to CIA402 node file
         Gen_CIA402Nodefile_path = os.path.join(buildpath,

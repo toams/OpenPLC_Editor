@@ -28,7 +28,7 @@ Beremiz Project Controller
 """
 
 
-from __future__ import absolute_import
+
 import os
 import traceback
 import time
@@ -632,7 +632,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             LocatedCCodeAndFlags.append(res[:2])
             if len(res) > 2:
                 Extras.extend(res[2:])
-        return map(list, zip(*LocatedCCodeAndFlags)) + [tuple(Extras)]
+        return list(map(list, list(zip(*LocatedCCodeAndFlags)))) + [tuple(Extras)]
 
     # Update PLCOpenEditor ConfNode Block types from loaded confnodes
     def RefreshConfNodesBlockLists(self):
@@ -882,15 +882,13 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 _("Error : At least one configuration and one resource must be declared in PLC !\n"))
             return False
         # transform those base names to full names with path
-        C_files = map(
-            lambda filename: os.path.join(buildpath, filename), C_files)
+        C_files = [os.path.join(buildpath, filename) for filename in C_files]
 
         # prepend beremiz include to configuration header
         H_files = [fname for fname in result.splitlines() if fname[
             -2:] == ".h" or fname[-2:] == ".H"]
         H_files.remove("LOCATED_VARIABLES.h")
-        H_files = map(
-            lambda filename: os.path.join(buildpath, filename), H_files)
+        H_files = [os.path.join(buildpath, filename) for filename in H_files]
         for H_file in H_files:
             with open(H_file, 'r') as original:
                 data = original.read()
@@ -986,7 +984,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 for line in ListGroup[0]:
                     # Split and Maps each field to dictionnary entries
                     attrs = dict(
-                        zip(ProgramsListAttributeName, line.strip().split(';')))
+                        list(zip(ProgramsListAttributeName, line.strip().split(';'))))
                     # Truncate "C_path" to remove conf an resources names
                     attrs["C_path"] = '__'.join(
                         attrs["C_path"].split(".", 2)[1:])
@@ -999,7 +997,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 for line in ListGroup[1]:
                     # Split and Maps each field to dictionnary entries
                     attrs = dict(
-                        zip(VariablesListAttributeName, line.strip().split(';')))
+                        list(zip(VariablesListAttributeName, line.strip().split(';'))))
                     # Truncate "C_path" to remove conf an resources names
                     parts = attrs["C_path"].split(".", 2)
                     if len(parts) > 2:
@@ -1086,9 +1084,8 @@ class ProjectController(ConfigTreeNode, PLCControler):
         """
         # filter location that are related to code that will be called
         # in retreive, publish, init, cleanup
-        locstrs = map(lambda x: "_".join(map(str, x)),
-                      [loc for loc, _Cfiles, DoCalls in
-                       self.LocationCFilesAndCFLAGS if loc and DoCalls])
+        locstrs = ["_".join(map(str, x)) for x in [loc for loc, _Cfiles, DoCalls in
+                       self.LocationCFilesAndCFLAGS if loc and DoCalls]]
 
         # Generate main, based on template
         if not self.BeremizRoot.getDisable_Extensions():
@@ -1101,7 +1098,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                 "retrieve_calls": "\n    ".join([
                     "__retrieve_%s();" % locstr for locstr in locstrs]),
                 "publish_calls": "\n    ".join([  # Call publish in reverse order
-                    "__publish_%s();" % locstrs[i - 1] for i in xrange(len(locstrs), 0, -1)]),
+                    "__publish_%s();" % locstrs[i - 1] for i in range(len(locstrs), 0, -1)]),
                 "init_calls": "\n    ".join([
                     "init_level=%d; " % (i + 1) +
                     "if((res = __init_%s(argc,argv))){" % locstr +
@@ -1109,7 +1106,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                     "return res;}" for i, locstr in enumerate(locstrs)]),
                 "cleanup_calls": "\n    ".join([
                     "if(init_level >= %d) " % i +
-                    "__cleanup_%s();" % locstrs[i - 1] for i in xrange(len(locstrs), 0, -1)])
+                    "__cleanup_%s();" % locstrs[i - 1] for i in range(len(locstrs), 0, -1)])
             }
         else:
             plc_main_code = targets.GetCode("plc_main_head.c") % {
@@ -1368,9 +1365,9 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
                     if editor_name == "":
                         if len(editors) == 1:
-                            editor_name = editors.keys()[0]
+                            editor_name = list(editors.keys())[0]
                         elif len(editors) > 0:
-                            names = editors.keys()
+                            names = list(editors.keys())
                             dialog = wx.SingleChoiceDialog(
                                 self.AppFrame,
                                 _("Select an editor:"),
@@ -1407,7 +1404,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             self._IECRawCodeView = None
         if self._ProjectFilesView == view:
             self._ProjectFilesView = None
-        if view in self._FileEditors.values():
+        if view in list(self._FileEditors.values()):
             self._FileEditors.pop(view.GetFilePath())
 
     def _Clean(self):
@@ -1503,7 +1500,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             allmethods = self.DefaultMethods.copy()
             allmethods.update(
                 self.MethodsFromStatus.get(status, {}))
-            for method, active in allmethods.items():
+            for method, active in list(allmethods.items()):
                 self.ShowMethod(method, active)
             self.previous_plcstate = status
             if self.AppFrame is not None:
@@ -1566,7 +1563,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
                             self.DebugTicks.append(debug_tick)
 
         buffers, self.DebugValuesBuffers = (self.DebugValuesBuffers,
-                                            [list() for dummy in xrange(len(self.TracedIECPath))])
+                                            [list() for dummy in range(len(self.TracedIECPath))])
 
         ticks, self.DebugTicks = self.DebugTicks, []
 
@@ -1579,7 +1576,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         self.TracedIECTypes = []
         if self._connector is not None and self.debug_status != PlcStatus.Broken:
             IECPathsToPop = []
-            for IECPath, data_tuple in self.IECdebug_datas.iteritems():
+            for IECPath, data_tuple in self.IECdebug_datas.items():
                 WeakCallableDict, _data_log, _status, fvalue, _buffer_list = data_tuple
                 if len(WeakCallableDict) == 0:
                     # Callable Dict is empty.
@@ -1603,10 +1600,10 @@ class ProjectController(ConfigTreeNode, PLCControler):
 
             if Idxs:
                 Idxs.sort()
-                IdxsT = zip(*Idxs)
+                IdxsT = list(zip(*Idxs))
                 self.TracedIECPath = IdxsT[3]
                 self.TracedIECTypes = IdxsT[1]
-                self.DebugToken = self._connector.SetTraceVariablesList(zip(*IdxsT[0:3]))
+                self.DebugToken = self._connector.SetTraceVariablesList(list(zip(*IdxsT[0:3])))
             else:
                 self.TracedIECPath = []
                 self._connector.SetTraceVariablesList([])
@@ -1673,7 +1670,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
             else:
                 IECdebug_data[4] = reduce(
                     lambda x, y: x | y,
-                    IECdebug_data[0].itervalues(),
+                    iter(IECdebug_data[0].values()),
                     False)
 
         self.ReArmDebugRegisterTimer()
@@ -1710,7 +1707,7 @@ class ProjectController(ConfigTreeNode, PLCControler):
         if data_tuple is not None:
             WeakCallableDict, _data_log, _status, _fvalue, buffer_list = data_tuple
             # data_log.append((debug_tick, value))
-            for weakcallable, buffer_list in WeakCallableDict.iteritems():
+            for weakcallable, buffer_list in WeakCallableDict.items():
                 function = getattr(weakcallable, function_name, None)
                 if function is not None:
                     if buffer_list:

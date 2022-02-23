@@ -206,7 +206,7 @@ class Modload:
         self.dynamic = dynamic
         self.parent_mod = parent_mod
 
-    def next(self):
+    def __next__(self):
 
         for i in range(len(self.app_modlist[self.idx])):
             app = self.app_modlist[self.idx][i]
@@ -229,7 +229,7 @@ def preload_app_modules(path, app_modnames, app_imported_fn, dynamic,
                         parent_mod=None):
 
     loader = Modload(path, app_modnames, app_imported_fn, dynamic, parent_mod)
-    loader.next()
+    next(loader)
 
 
 # as comment on line 20 says
@@ -263,11 +263,11 @@ class TypeError(BaseException):
     name = "TypeError"
 
 
-class StandardError(Exception):
+class Exception(Exception):
     name = "StandardError"
 
 
-class LookupError(StandardError):
+class LookupError(Exception):
     name = "LookupError"
 
     def toString(self):
@@ -278,7 +278,7 @@ class KeyError(LookupError):
     name = "KeyError"
 
 
-class AttributeError(StandardError):
+class AttributeError(Exception):
     name = "AttributeError"
 
     def toString(self):
@@ -826,7 +826,7 @@ class Dict:
         return value[1];
         """)
 
-    def __nonzero__(self):
+    def __bool__(self):
         JS("""
         for (var i in this.d){
             return true;
@@ -883,16 +883,16 @@ class Dict:
         """)
 
     def __iter__(self):
-        return self.keys().__iter__()
+        return list(self.keys()).__iter__()
 
     def iterkeys(self):
         return self.__iter__()
 
     def itervalues(self):
-        return self.values().__iter__()
+        return list(self.values()).__iter__()
 
     def iteritems(self):
-        return self.items().__iter__()
+        return list(self.items()).__iter__()
 
     def setdefault(self, key, default_value):
         if key not in self:
@@ -904,7 +904,7 @@ class Dict:
         return self[key]
 
     def update(self, d):
-        for k, v in d.iteritems():
+        for k, v in d.items():
             self[k] = v
 
     def getObject(self):
@@ -915,7 +915,7 @@ class Dict:
         return self.d
 
     def copy(self):
-        return Dict(self.items())
+        return Dict(list(self.items()))
 
     def __str__(self):
         return repr(self)
@@ -1408,7 +1408,7 @@ def type(clsname, bases=None, methods=None):
 
     JS(" var mths = {}; ")
     if methods:
-        for k in methods.keys():
+        for k in list(methods.keys()):
             _mth = methods[k]
             JS(" mths[k] = _mth; ")
 

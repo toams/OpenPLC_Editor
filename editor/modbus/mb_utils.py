@@ -22,8 +22,8 @@
 # This code is made available on the understanding that it will not be
 # used in safety-critical situations without a full and competent review.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 from six.moves import xrange
 
 # dictionary implementing:
@@ -48,7 +48,7 @@ def GetCTVal(child, index):
 
 # Configuration tree value acces helper, for multiple values
 def GetCTVals(child, indexes):
-    return map(lambda index: GetCTVal(child, index), indexes)
+    return [GetCTVal(child, index) for index in indexes]
 
 
 def GetTCPServerNodePrinted(self, child):
@@ -60,7 +60,7 @@ def GetTCPServerNodePrinted(self, child):
 {"%(locnodestr)s", %(slaveid)s, {naf_tcp, {.tcp = {%(host)s, "%(port)s", DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    host, port, slaveid = GetCTVals(child, range(3))
+    host, port, slaveid = GetCTVals(child, list(range(3)))
     if host == "#ANY#":
         host = 'INADDR_ANY'
     else:
@@ -91,16 +91,16 @@ def GetTCPServerMemAreaPrinted(self, child, nodeid):
     request_dict["locreqstr"] = "_".join(map(str, child.GetCurrentLocation()))
     request_dict["nodeid"] = str(nodeid)
     request_dict["address"] = GetCTVal(child, 2)
-    if int(request_dict["address"]) not in xrange(65536):
+    if int(request_dict["address"]) not in range(65536):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid Start Address in server memory area node %(locreqstr)s (Must be in the range [0..65535])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
     request_dict["count"] = GetCTVal(child, 1)
-    if int(request_dict["count"]) not in xrange(1, 65536):
+    if int(request_dict["count"]) not in range(1, 65536):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid number of channels in server memory area node %(locreqstr)s (Must be in the range [1..65536-start_address])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
-    if (int(request_dict["address"]) + int(request_dict["count"])) not in xrange(1, 65537):
+    if (int(request_dict["address"]) + int(request_dict["count"])) not in range(1, 65537):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid number of channels in server memory area node %(locreqstr)s (Must be in the range [1..65536-start_address])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
@@ -123,7 +123,7 @@ def GetRTUSlaveNodePrinted(self, child):
 {"%(locnodestr)s", %(slaveid)s, {naf_rtu, {.rtu = {"%(device)s", %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    device, baud, parity, stopbits, slaveid = GetCTVals(child, range(5))
+    device, baud, parity, stopbits, slaveid = GetCTVals(child, list(range(5)))
 
     node_dict = {"locnodestr": location,
                  "device": device,
@@ -143,7 +143,7 @@ def GetRTUClientNodePrinted(self, child):
 {"%(locnodestr)s", {naf_rtu, {.rtu = {"%(device)s", %(baud)s /*baud*/, %(parity)s /*parity*/, 8 /*data bits*/, %(stopbits)s, 0 /* ignore echo */}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    device, baud, parity, stopbits, coms_period = GetCTVals(child, range(5))
+    device, baud, parity, stopbits, coms_period = GetCTVals(child, list(range(5)))
 
     node_dict = {"locnodestr": location,
                  "device": device,
@@ -163,7 +163,7 @@ def GetTCPClientNodePrinted(self, child):
 {"%(locnodestr)s", {naf_tcp, {.tcp = {"%(host)s", "%(port)s", DEF_CLOSE_ON_SILENCE}}}, -1 /* mb_nd */, 0 /* init_state */, %(coms_period)s /* communication period */, 0 /* prev_error */}'''
 
     location = ".".join(map(str, child.GetCurrentLocation()))
-    host, port, coms_period = GetCTVals(child, range(3))
+    host, port, coms_period = GetCTVals(child, list(range(3)))
 
     node_dict = {"locnodestr": location,
                  "host": host,
@@ -206,19 +206,19 @@ DEF_REQ_SEND_RETRIES, 0 /* error_code */, 0 /* prev_code */, {%(timeout_s)d, %(t
         "iotype": modbus_function_dict[GetCTVal(child, 0)][1],
         "maxcount": modbus_function_dict[GetCTVal(child, 0)][2]}
 
-    if int(request_dict["slaveid"]) not in xrange(256):
+    if int(request_dict["slaveid"]) not in range(256):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid slaveID in TCP client request node %(locreqstr)s (Must be in the range [0..255])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
-    if int(request_dict["address"]) not in xrange(65536):
+    if int(request_dict["address"]) not in range(65536):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid Start Address in TCP client request node %(locreqstr)s (Must be in the range [0..65535])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
-    if int(request_dict["count"]) not in xrange(1, 1 + int(request_dict["maxcount"])):
+    if int(request_dict["count"]) not in range(1, 1 + int(request_dict["maxcount"])):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid number of channels in TCP client request node %(locreqstr)s (Must be in the range [1..%(maxcount)s])\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None
-    if (int(request_dict["address"]) + int(request_dict["count"])) not in xrange(1, 65537):
+    if (int(request_dict["address"]) + int(request_dict["count"])) not in range(1, 65537):
         self.GetCTRoot().logger.write_error(
             "Modbus plugin: Invalid number of channels in TCP client request node %(locreqstr)s (start_address + nr_channels must be less than 65536)\nModbus plugin: Aborting C code generation for this node\n" % request_dict)
         return None

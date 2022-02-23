@@ -23,8 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 from functools import reduce
 import numpy
 import os
@@ -221,16 +221,15 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
 
         self.GraphicPanels = []
 
-        graphics_button_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        main_sizer.AddSizer(graphics_button_sizer, border=5, flag=wx.GROW | wx.ALL)
+        graphics_button_sizer = wx.BoxSizer(orient=wx.HORIZONTAL)
+        main_sizer.Add(graphics_button_sizer, flag=wx.GROW | wx.ALL)
 
-        range_label = wx.StaticText(self, label=_('Range:'))
-        graphics_button_sizer.AddWindow(range_label, flag=wx.ALIGN_CENTER_VERTICAL)
+        range_label = wx.StaticText(self, id=-1, label='Range:')
+        graphics_button_sizer.Add(range_label, flag=wx.ALIGN_CENTER_VERTICAL)
 
         self.CanvasRange = wx.ComboBox(self, style=wx.CB_READONLY)
         self.Bind(wx.EVT_COMBOBOX, self.OnRangeChanged, self.CanvasRange)
-        graphics_button_sizer.AddWindow(self.CanvasRange, 1,
-                                        border=5,
+        graphics_button_sizer.Add(self.CanvasRange, 1, border=5,
                                         flag=wx.LEFT | wx.ALIGN_CENTER_VERTICAL)
 
         self.CanvasRange.Clear()
@@ -250,7 +249,7 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
             button.SetToolTipString(help)
             setattr(self, name, button)
             self.Bind(wx.EVT_BUTTON, getattr(self, "On" + name), button)
-            graphics_button_sizer.AddWindow(button, border=5, flag=wx.LEFT)
+            graphics_button_sizer.Add(button, border=5, flag=wx.LEFT)
 
         self.CanvasPosition = wx.ScrollBar(
             self, size=wx.Size(0, 16), style=wx.SB_HORIZONTAL)
@@ -264,19 +263,19 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
                                  self.OnPositionChanging, self.CanvasPosition)
         self.CanvasPosition.Bind(wx.EVT_SCROLL_PAGEDOWN,
                                  self.OnPositionChanging, self.CanvasPosition)
-        main_sizer.AddWindow(self.CanvasPosition, border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
+        main_sizer.Add(self.CanvasPosition, border=5, flag=wx.GROW | wx.LEFT | wx.RIGHT | wx.BOTTOM)
 
         self.TickSizer = wx.BoxSizer(wx.HORIZONTAL)
-        main_sizer.AddSizer(self.TickSizer, border=5, flag=wx.ALL | wx.GROW)
+        main_sizer.Add(self.TickSizer, border=5, flag=wx.ALL | wx.GROW)
 
         self.TickLabel = wx.StaticText(self)
-        self.TickSizer.AddWindow(self.TickLabel, border=5, flag=wx.RIGHT)
+        self.TickSizer.Add(self.TickLabel, border=5, flag=wx.RIGHT)
 
         self.MaskLabel = wx.TextCtrl(self, style=wx.TE_READONLY | wx.TE_CENTER | wx.NO_BORDER)
-        self.TickSizer.AddWindow(self.MaskLabel, 1, border=5, flag=wx.RIGHT | wx.GROW)
+        self.TickSizer.Add(self.MaskLabel, 1, border=5, flag=wx.RIGHT | wx.GROW)
 
         self.TickTimeLabel = wx.StaticText(self)
-        self.TickSizer.AddWindow(self.TickTimeLabel)
+        self.TickSizer.Add(self.TickTimeLabel)
 
         self.GraphicsWindow = wx.ScrolledWindow(self, style=wx.HSCROLL | wx.VSCROLL)
         self.GraphicsWindow.SetBackgroundColour(wx.WHITE)
@@ -286,7 +285,7 @@ class DebugVariablePanel(wx.Panel, DebugViewer):
         self.GraphicsWindow.Bind(wx.EVT_SIZE, self.OnGraphicsWindowResize)
         self.GraphicsWindow.Bind(wx.EVT_MOUSEWHEEL, self.OnGraphicsWindowMouseWheel)
 
-        main_sizer.AddWindow(self.GraphicsWindow, 1, flag=wx.GROW)
+        main_sizer.Add(self.GraphicsWindow, 1, flag=wx.GROW)
 
         self.GraphicsSizer = wx.BoxSizer(wx.VERTICAL)
         self.GraphicsWindow.SetSizer(self.GraphicsSizer)

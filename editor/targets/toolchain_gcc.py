@@ -24,7 +24,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
+
 import os
 import re
 import operator
@@ -118,7 +118,7 @@ class toolchain_gcc(object):
         self.append_cfile_deps(src, deps)
         # recurse through deps
         # TODO detect cicular deps.
-        return reduce(operator.concat, map(self.concat_deps, deps), src)
+        return reduce(operator.concat, list(map(self.concat_deps, deps)), src)
 
     def check_and_update_hash_and_deps(self, bn):
         # Get latest computed hash and deps
@@ -138,7 +138,7 @@ class toolchain_gcc(object):
             self.srcmd5[bn] = (newhash, deps)
         # recurse through deps
         # TODO detect cicular deps.
-        return reduce(operator.and_, map(self.check_and_update_hash_and_deps, deps), match)
+        return reduce(operator.and_, list(map(self.check_and_update_hash_and_deps, deps)), match)
 
     def calc_source_md5(self):
         wholesrcdata = ""

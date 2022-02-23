@@ -23,8 +23,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 from datetime import datetime
 from time import time as gettime
 from weakref import proxy
@@ -303,7 +303,7 @@ class LogViewer(DebugViewer, wx.Panel):
         main_sizer.AddGrowableRow(1)
 
         filter_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        main_sizer.AddSizer(filter_sizer, border=5, flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
+        main_sizer.Add(filter_sizer, border=5, flag=wx.TOP | wx.LEFT | wx.RIGHT | wx.GROW)
 
         self.MessageFilter = wx.ComboBox(self, style=wx.CB_READONLY)
         self.MessageFilter.Append(_("All"))
@@ -312,7 +312,7 @@ class LogViewer(DebugViewer, wx.Panel):
         for level in levels:
             self.MessageFilter.Append(_(level))
         self.Bind(wx.EVT_COMBOBOX, self.OnMessageFilterChanged, self.MessageFilter)
-        filter_sizer.AddWindow(self.MessageFilter, 1, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        filter_sizer.Add(self.MessageFilter, 1, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
 
         self.SearchMessage = wx.SearchCtrl(self, style=wx.TE_PROCESS_ENTER)
         self.SearchMessage.ShowSearchButton(True)
@@ -322,18 +322,18 @@ class LogViewer(DebugViewer, wx.Panel):
                   self.OnSearchMessageSearchButtonClick, self.SearchMessage)
         self.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN,
                   self.OnSearchMessageCancelButtonClick, self.SearchMessage)
-        filter_sizer.AddWindow(self.SearchMessage, 3, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
+        filter_sizer.Add(self.SearchMessage, 3, border=5, flag=wx.RIGHT | wx.ALIGN_CENTER_VERTICAL)
 
         self.CleanButton = wx.lib.buttons.GenBitmapButton(self, bitmap=GetBitmap("Clean"),
                                                           size=wx.Size(28, 28), style=wx.NO_BORDER)
         self.CleanButton.SetToolTipString(_("Clean log messages"))
         self.Bind(wx.EVT_BUTTON, self.OnCleanButton, self.CleanButton)
-        filter_sizer.AddWindow(self.CleanButton)
+        filter_sizer.Add(self.CleanButton)
 
         message_panel_sizer = wx.FlexGridSizer(cols=2, hgap=0, rows=1, vgap=0)
         message_panel_sizer.AddGrowableCol(0)
         message_panel_sizer.AddGrowableRow(0)
-        main_sizer.AddSizer(message_panel_sizer, border=5, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.GROW)
+        main_sizer.Add(message_panel_sizer, border=5, flag=wx.LEFT | wx.RIGHT | wx.BOTTOM | wx.GROW)
 
         self.MessagePanel = wx.Panel(self)
         if wx.Platform == '__WXMSW__':
@@ -349,10 +349,10 @@ class LogViewer(DebugViewer, wx.Panel):
         self.MessagePanel.Bind(wx.EVT_ERASE_BACKGROUND, self.OnMessagePanelEraseBackground)
         self.MessagePanel.Bind(wx.EVT_PAINT, self.OnMessagePanelPaint)
         self.MessagePanel.Bind(wx.EVT_SIZE, self.OnMessagePanelResize)
-        message_panel_sizer.AddWindow(self.MessagePanel, flag=wx.GROW)
+        message_panel_sizer.Add(self.MessagePanel, flag=wx.GROW)
 
         self.MessageScrollBar = LogScrollBar(self, wx.Size(16, -1))
-        message_panel_sizer.AddWindow(self.MessageScrollBar, flag=wx.GROW)
+        message_panel_sizer.Add(self.MessageScrollBar, flag=wx.GROW)
 
         self.SetSizer(main_sizer)
 
@@ -372,7 +372,7 @@ class LogViewer(DebugViewer, wx.Panel):
         self.ParentWindow = window
 
         self.LevelIcons = [GetBitmap("LOG_" + level) for level in LogLevels]
-        self.LevelFilters = [range(i) for i in xrange(4, 0, -1)]
+        self.LevelFilters = [list(range(i)) for i in range(4, 0, -1)]
         self.CurrentFilter = self.LevelFilters[0]
         self.CurrentSearchValue = ""
 
@@ -417,14 +417,14 @@ class LogViewer(DebugViewer, wx.Panel):
 
     def SetLogCounters(self, log_count):
         new_messages = []
-        for level, count, prev in zip(xrange(LogLevelsCount), log_count, self.previous_log_count):
+        for level, count, prev in zip(range(LogLevelsCount), log_count, self.previous_log_count):
             if count is not None and prev != count:
                 if prev is None:
                     dump_end = max(-1, count - 10)
                     oldest_message = (-1, None)
                 else:
                     dump_end = prev - 1
-                for msgidx in xrange(count-1, dump_end, -1):
+                for msgidx in range(count-1, dump_end, -1):
                     new_message = self.GetLogMessageFromSource(msgidx, level)
                     if new_message is None:
                         if prev is None:
@@ -565,7 +565,7 @@ class LogViewer(DebugViewer, wx.Panel):
 
     def IsPLCLogEmpty(self):
         empty = True
-        for _level, prev in zip(xrange(LogLevelsCount), self.previous_log_count):
+        for _level, prev in zip(range(LogLevelsCount), self.previous_log_count):
             if prev is not None:
                 empty = False
                 break
